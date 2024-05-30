@@ -225,3 +225,165 @@ INSERT INTO Certificaciones (Codigo_Persona, Nombre_Certificacion, Fecha_Obtenci
 VALUES 
 ('P001', 'Certificación en Cardiología', '2023-12-01', '2026-12-01', 3),  -- Certificación de Juan Perez
 ('P002', 'Curso de Auxiliar de Enfermería', '2022-05-01', NULL, 1);  -- Certificación de Maria Rodriguez
+
+-- Consultas
+
+-- 1. Listado de pacientes a cargo de un médico de acuerdo con su especialidad
+
+SELECT 
+    Paciente.Codigo_Pac AS ID_Paciente,
+    Persona.Nombre AS Nombre_Paciente,
+    Paciente.Diagnostico,
+    Medico.Especialidad
+FROM 
+    Paciente
+JOIN 
+    Persona ON Paciente.Codigo_Pac = Persona.Codigo_Per
+JOIN 
+    Medico ON Paciente.ID_Medico = Medico.Codigo_Med
+WHERE 
+    Medico.Especialidad = 'Especialidad_Deseada';
+
+-- 2. Listado de médicos que el centro de salud tiene disponibles para alguna especialidad particular
+
+SELECT 
+    Medico.Codigo_Med AS ID_Medico,
+    Persona.Nombre AS Nombre_Medico,
+    Medico.Especialidad
+FROM 
+    Medico
+JOIN 
+    Persona ON Medico.Codigo_Med = Persona.Codigo_Per
+WHERE 
+    Medico.Especialidad = 'Especialidad_Deseada';
+
+-- 3. Conocer los datos de los pacientes a los cuales se les ha diagnosticado una determinada enfermedad
+
+SELECT 
+    Paciente.Codigo_Pac AS ID_Paciente,
+    Persona.Nombre AS Nombre_Paciente,
+    Paciente.Diagnostico
+FROM 
+    Paciente
+JOIN 
+    Persona ON Paciente.Codigo_Pac = Persona.Codigo_Per
+WHERE 
+    Paciente.Diagnostico LIKE '%Enfermedad_Deseada%';
+
+-- 4. Listado de los médicos que han disfrutado o tienen planeadas las vacaciones en un intervalo de tiempo dado
+
+SELECT 
+    Medico.Codigo_Med AS ID_Medico,
+    Persona.Nombre AS Nombre_Medico,
+    Vacacion.Fecha_Inicio,
+    Vacacion.Fecha_Fin
+FROM 
+    Vacacion
+JOIN 
+    Medico ON Vacacion.Codigo_Med = Medico.Codigo_Med
+JOIN 
+    Persona ON Medico.Codigo_Med = Persona.Codigo_Per
+WHERE 
+    (Vacacion.Fecha_Inicio BETWEEN 'Fecha_Inicio_Deseada' AND 'Fecha_Fin_Deseada')
+    OR 
+    (Vacacion.Fecha_Fin BETWEEN 'Fecha_Inicio_Deseada' AND 'Fecha_Fin_Deseada');
+
+-- 5. Historial de Consulta
+
+SELECT 
+    Historial_Consulta.ID_Consulta,
+    Persona.Nombre AS Nombre_Medico,
+    Paciente.Codigo_Pac AS ID_Paciente,
+    Paciente.Nombre AS Nombre_Paciente,
+    Historial_Consulta.Fecha_Hora,
+    Historial_Consulta.Duracion,
+    Historial_Consulta.Nota
+FROM 
+    Historial_Consulta
+JOIN 
+    Medico ON Historial_Consulta.Codigo_Med = Medico.Codigo_Med
+JOIN 
+    Persona ON Medico.Codigo_Med = Persona.Codigo_Per
+JOIN 
+    Paciente ON Historial_Consulta.Codigo_Pac = Paciente.Codigo_Pac
+WHERE 
+    Medico.Codigo_Med = 'Codigo_Medico';
+
+-- 6. Asignación de Pacientes
+
+SELECT 
+    Medico.Codigo_Med AS ID_Medico,
+    Persona.Nombre AS Nombre_Medico,
+    Medico.Especialidad,
+    Horario_Consulta.Dia_Semana,
+    Horario_Consulta.Hora_Inicio,
+    Horario_Consulta.Hora_Fin
+FROM 
+    Medico
+JOIN 
+    Persona ON Medico.Codigo_Med = Persona.Codigo_Per
+JOIN 
+    Horario_Consulta ON Medico.ID_Horario_Consulta = Horario_Consulta.ID_Horario_Consulta
+WHERE 
+    Medico.Especialidad = 'Especialidad_Deseada';
+
+-- 7. Actualización de Contacto / Dirección
+
+UPDATE Persona
+SET 
+    ID_Direccion = 'Nueva_ID_Direccion'
+WHERE 
+    Codigo_Per = 'Codigo_Persona';
+
+-- 8. Actualización de Contacto / Teléfono
+
+UPDATE Telefono
+SET 
+    Numero_Telefono = 'Nuevo_Numero_Telefono'
+WHERE 
+    ID_Persona = 'Codigo_Persona' 
+    AND ID_Telefono = 'ID_Telefono';
+
+-- 9. Alerta de Vacación
+
+SELECT 
+    Alerta_Vacacion.ID_Alerta,
+    Persona.Nombre,
+    Alerta_Vacacion.Fecha_Alerta,
+    Alerta_Vacacion.Fecha_Inicio_Vacacion,
+    Alerta_Vacacion.Persona_Tipo
+FROM 
+    Alerta_Vacacion
+JOIN 
+    Persona ON Alerta_Vacacion.Codigo_Persona = Persona.Codigo_Per
+WHERE 
+    Alerta_Vacacion.Fecha_Alerta BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 MONTH);
+
+-- 10. Seguimiento de Diagnósticos
+
+SELECT 
+    Paciente.Codigo_Pac AS ID_Paciente,
+    Persona.Nombre AS Nombre_Paciente,
+    Paciente.Diagnostico
+FROM 
+    Paciente
+JOIN 
+    Persona ON Paciente.Codigo_Pac = Persona.Codigo_Per
+WHERE 
+    Paciente.Codigo_Pac = 'Codigo_Paciente';
+
+-- 11. Capacitación y Certificación
+
+SELECT 
+    Certificacion.ID_Certificacion,
+    Persona.Nombre,
+    Certificacion.Nombre_Certificacion,
+    Certificacion.Fecha_Obtencion,
+    Certificacion.Fecha_Vencimiento,
+    Certificacion.Persona_Tipo
+FROM 
+    Certificacion
+JOIN 
+    Persona ON Certificacion.Codigo_Persona = Persona.Codigo_Per
+WHERE 
+    Certificacion.Codigo_Persona = 'Codigo_Persona';
