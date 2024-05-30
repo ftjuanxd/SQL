@@ -118,24 +118,24 @@ CREATE TABLE Historial_Consulta (
     Codigo_Pac VARCHAR(50) NOT NULL,
     Fecha_Hora DATETIME NOT NULL,
     Duracion TIME NOT NULL,
-    Notas TEXT,
+    Nota TEXT,
     FOREIGN KEY (Codigo_Med) REFERENCES Medico(Codigo_Med),
     FOREIGN KEY (Codigo_Pac) REFERENCES Paciente(Codigo_Pac)
 );
 
--- Crear tabla Alertas de Vacaciones
-CREATE TABLE Alertas_Vacaciones (
+-- Crear tabla Alerta de Vacacion
+CREATE TABLE Alerta_Vacacion (
     ID_Alerta INT AUTO_INCREMENT PRIMARY KEY,
     Codigo_Persona VARCHAR(50) NOT NULL,
     Fecha_Alerta DATE NOT NULL,
-    Fecha_Inicio_Vacaciones DATE NOT NULL,
+    Fecha_Inicio_Vacacion DATE NOT NULL,
     ID_Tipo_Persona INT NOT NULL,
     FOREIGN KEY (Codigo_Persona) REFERENCES Persona(Codigo_Per),
     FOREIGN KEY (ID_Tipo_Persona) REFERENCES Tipo_Persona(ID_Tipo_Persona)
 );
 
--- Crear tabla Certificaciones
-CREATE TABLE Certificaciones (
+-- Crear tabla Certificacion
+CREATE TABLE Certificacion (
     ID_Certificacion INT AUTO_INCREMENT PRIMARY KEY,
     Codigo_Persona VARCHAR(50) NOT NULL,
     Nombre_Certificacion VARCHAR(100) NOT NULL,
@@ -220,18 +220,18 @@ VALUES
 ('P001', '2024-01-01', '2024-05-31');  -- Juan Perez trabajando de Enero a Mayo 2024
 
 -- Insertar datos en la tabla Historial_Consulta
-INSERT INTO Historial_Consulta (Codigo_Med, Codigo_Pac, Fecha_Hora, Duracion, Notas)
+INSERT INTO Historial_Consulta (Codigo_Med, Codigo_Pac, Fecha_Hora, Duracion, Nota)
 VALUES 
 ('P001', 'P002', '2024-04-01 10:00:00', '00:30:00', 'Consulta de seguimiento de hipertensión');  -- Consulta entre Juan Perez y Maria Rodriguez
 
--- Insertar datos en la tabla Alertas_Vacaciones
-INSERT INTO Alertas_Vacaciones (Codigo_Persona, Fecha_Alerta, Fecha_Inicio_Vacaciones, ID_Tipo_Persona)
+-- Insertar datos en la tabla Alerta_Vacacion
+INSERT INTO Alerta_Vacacion (Codigo_Persona, Fecha_Alerta, Fecha_Inicio_Vacacion, ID_Tipo_Persona)
 VALUES 
 ('P001', '2024-06-01', '2024-07-01', 1),  -- Alerta para Juan Perez
 ('P002', '2024-05-01', '2024-06-01', 2);  -- Alerta para Maria Rodriguez
 
--- Insertar datos en la tabla Certificaciones
-INSERT INTO Certificaciones (Codigo_Persona, Nombre_Certificacion, Fecha_Obtencion, Fecha_Vencimiento, ID_Tipo_Persona)
+-- Insertar datos en la tabla Certificacion
+INSERT INTO Certificacion (Codigo_Persona, Nombre_Certificacion, Fecha_Obtencion, Fecha_Vencimiento, ID_Tipo_Persona)
 VALUES 
 ('P001', 'Cardiología Avanzada', '2022-01-01', '2025-01-01', 1),  -- Certificación de Juan Perez
 ('P002', 'Primeros Auxilios', '2023-01-01', NULL, 2);  -- Certificación de Maria Rodriguez
@@ -307,7 +307,7 @@ SELECT
     Paciente.Persona.Nombre AS Nombre_Paciente,
     Historial_Consulta.Fecha_Hora,
     Historial_Consulta.Duracion,
-    Historial_Consulta.Notas
+    Historial_Consulta.Nota
 FROM 
     Historial_Consulta
 JOIN 
@@ -354,20 +354,20 @@ WHERE
     ID_Persona = 'Codigo_Persona' 
     AND ID_Telefono = 'ID_Telefono';
 
--- 8. Alertas de Vacaciones
+-- 8. Alerta de Vacacion
 
 SELECT 
-    Alertas_Vacaciones.ID_Alerta,
+    Alerta_Vacacion.ID_Alerta,
     Persona.Nombre,
-    Alertas_Vacaciones.Fecha_Alerta,
-    Alertas_Vacaciones.Fecha_Inicio_Vacaciones,
-    Alertas_Vacaciones.Persona_Tipo
+    Alerta_Vacacion.Fecha_Alerta,
+    Alerta_Vacacion.Fecha_Inicio_Vacacion,
+    Alerta_Vacacion.Persona_Tipo
 FROM 
-    Alertas_Vacaciones
+    Alerta_Vacacion
 JOIN 
-    Persona ON Alertas_Vacaciones.Codigo_Persona = Persona.Codigo_Per
+    Persona ON Alerta_Vacacion.Codigo_Persona = Persona.Codigo_Per
 WHERE 
-    Alertas_Vacaciones.Fecha_Alerta BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 MONTH);
+    Alerta_Vacacion.Fecha_Alerta BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 MONTH);
 
 -- 9. Seguimiento de Diagnosticos
 
@@ -382,4 +382,17 @@ JOIN
 WHERE 
     Paciente.Codigo_Pac = 'Codigo_Paciente';
 
--- 10. Capacitacion y Certificaciones
+-- 10. Capacitacion y Certificacion
+SELECT 
+    Certificacion.ID_Certificacion,
+    Persona.Nombre,
+    Certificacion.Nombre_Certificacion,
+    Certificacion.Fecha_Obtencion,
+    Certificacion.Fecha_Vencimiento,
+    Certificacion.Persona_Tipo
+FROM 
+    Certificacion
+JOIN 
+    Persona ON Certificacion.Codigo_Persona = Persona.Codigo_Per
+WHERE 
+    Certificacion.Codigo_Persona = 'Codigo_Persona';
