@@ -261,7 +261,7 @@ WHERE
 
 SELECT 
     Paciente.Codigo_Pac AS ID_Paciente,
-    Persona.Nombre AS Nombre_Paciente,
+    Persona.Nombre AS Nombre_Paciente,,
     Paciente.Diagnostico
 FROM 
     Paciente
@@ -284,9 +284,9 @@ JOIN
 JOIN 
     Persona ON Medico.Codigo_Med = Persona.Codigo_Per
 WHERE 
-    (Vacacion.Fecha_Inicio BETWEEN 'Fecha_Inicio_Deseada' AND 'Fecha_Fin_Deseada')
+    (Vacacion.Fecha_Inicio BETWEEN 'Fecha_Inicio_Rango_Inicial' AND 'Fecha_Inicio_Rango_Final')
     OR 
-    (Vacacion.Fecha_Fin BETWEEN 'Fecha_Inicio_Deseada' AND 'Fecha_Fin_Deseada');
+    (Vacacion.Fecha_Fin BETWEEN 'Fecha_Fin_Rango_Inicial' AND 'Fecha_Fin_Rango_Final');
 
 -- 5. Historial de Consulta
 
